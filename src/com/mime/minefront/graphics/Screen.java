@@ -32,6 +32,7 @@ Screen extends Render
         }
         render.floor(game);
         render.renderDistanceLimiter();
+        // render.walls();
         draw(render, 0, 0);
     }
 }

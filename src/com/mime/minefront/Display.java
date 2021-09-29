@@ -10,7 +10,12 @@
 
 /*******************************************************************************************************************************************************************
  * Techniques we are using in this 3D FPS program:
- *
+ * Drawing pixels, BufferedImage, BufferedInt, BufferStrategy, Graphics
+ * Rendering, animating pixels and graphics
+ * FPS Counter, Alpha support, Bitwise operators
+ * Making square floors and ceilings, animating depth, animate walking in a 3D world
+ * Rotation, user input/controls, limiting the render distance, using the mouse to look around a 3D world
+ * Draw text to the screen, adding textures, adding crouch/walk/sprint/jump, making walls
  *******************************************************************************************************************************************************************/
 
 package com.mime.minefront;

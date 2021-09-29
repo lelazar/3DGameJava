@@ -3,6 +3,8 @@ package com.mime.minefront.graphics;
 import com.mime.minefront.Game;
 import com.mime.minefront.input.Controller;
 
+import java.util.Random;
+
 public class
 Render3D extends Render
 {
@@ -66,7 +68,71 @@ Render3D extends Render
         }
     }
 
-    public void renderDistanceLimiter()
+    public void
+    walls()
+    {
+        Random random = new Random(100);
+        // Rendering a wall made by pixels (and adding texture on it)
+        for(int i=0; i<20000; i++)
+        {
+            double xx = random.nextDouble();  // Horizontal
+            double yy = random.nextDouble();  // Vertical
+            double zz = 1.5;  // Depth
+
+            int xPixel = (int) (xx / zz * height / 2 + width / 2);
+            int yPixel = (int) (yy / zz * height / 2 + height / 2);
+            // Want not to render things off the screen
+            if(xPixel >= 0 && yPixel >= 0 && xPixel < width && yPixel < height)
+            {
+                pixels[xPixel + yPixel * width] = 0xffffff;
+            }
+        }
+        for(int i=0; i<20000; i++)
+        {
+            double xx = random.nextDouble() - 1;  // Horizontal
+            double yy = random.nextDouble();  // Vertical
+            double zz = 1.5;  // Depth
+
+            int xPixel = (int) (xx / zz * height / 2 + width / 2);
+            int yPixel = (int) (yy / zz * height / 2 + height / 2);
+            // Want not to render things off the screen
+            if(xPixel >= 0 && yPixel >= 0 && xPixel < width && yPixel < height)
+            {
+                pixels[xPixel + yPixel * width] = 0xffffff;
+            }
+        }
+        for(int i=0; i<20000; i++)
+        {
+            double xx = random.nextDouble() - 1;  // Horizontal
+            double yy = random.nextDouble() - 1;  // Vertical
+            double zz = 1.5;  // Depth
+
+            int xPixel = (int) (xx / zz * height / 2 + width / 2);
+            int yPixel = (int) (yy / zz * height / 2 + height / 2);
+            // Want not to render things off the screen
+            if(xPixel >= 0 && yPixel >= 0 && xPixel < width && yPixel < height)
+            {
+                pixels[xPixel + yPixel * width] = 0xffffff;
+            }
+        }
+        for(int i=0; i<20000; i++)
+        {
+            double xx = random.nextDouble();  // Horizontal
+            double yy = random.nextDouble() - 1;  // Vertical
+            double zz = 1.5;  // Depth
+
+            int xPixel = (int) (xx / zz * height / 2 + width / 2);
+            int yPixel = (int) (yy / zz * height / 2 + height / 2);
+            // Want not to render things off the screen
+            if(xPixel >= 0 && yPixel >= 0 && xPixel < width && yPixel < height)
+            {
+                pixels[xPixel + yPixel * width] = 0xffffff;
+            }
+        }
+    }
+
+    public void
+    renderDistanceLimiter()
     {
         for(int i=0; i<width*height; i++)
         {
@@ -103,6 +169,15 @@ Next, for every horizontal row you loop through all the pixels based on the dist
 x = sx * z
 
 Now you have top down 2d cords x and z which you can directly translate to texture coordinates
+ */
+
+/*
+        pixels[11 + 10 * width] = 0xffffff;
+        pixels[12 + 10 * width] = 0xffffff;
+        pixels[13 + 10 * width] = 0xffffff;
+        pixels[14 + 10 * width] = 0xffffff;
+        pixels[15 + 10 * width] = 0xffffff;
+        pixels[16 + 10 * width] = 0xffffff;
  */
 
 
