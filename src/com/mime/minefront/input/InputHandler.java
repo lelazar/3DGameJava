@@ -8,6 +8,12 @@ InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionLi
     public boolean[] key = new boolean[68836];
     public static int MouseX;
     public static int MouseY;
+    public static int MouseDX;  // D = Drag
+    public static int MouseDY;  // D = Drag
+    public static int MousePX;  // P = Pressed
+    public static int MousePY;  // P = Pressed
+    public static int MouseButton;
+    public static boolean dragged = false;
 
     @Override
     public void focusGained(FocusEvent e) {
@@ -52,12 +58,16 @@ InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionLi
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        MouseButton = e.getButton();
+        MousePX = e.getX();
+        MousePY = e.getY();
+        //dragged = true;
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        dragged = false;
+        MouseButton = 0;
     }
 
     @Override
@@ -72,7 +82,9 @@ InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionLi
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        dragged = true;
+        MouseDX = e.getX();
+        MouseDY = e.getY();
     }
 
     @Override

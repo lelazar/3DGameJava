@@ -32,10 +32,16 @@ Screen extends Render
         }
         render.floor(game);
         render.renderDistanceLimiter();
-        // render.walls();
+
         draw(render, 0, 0);
     }
 }
+
+
+
+
+
+
 /*
         for (int i=0; i<50; i++) {  // For example if we want to loop it until 1000, we can add i * 5 (200 * 5) to the Math.sin and Math.cos and we can have better performance instead if we are looping it until i<1000
             // int anim = (int) (Math.sin((System.currentTimeMillis() + i * 8) % 2000.0 / 2000 * Math.PI * 2) * 200);
@@ -48,8 +54,12 @@ Screen extends Render
         }
  */
 
+// render.walls();
 
-
+//render.renderWall(0, 0.5, 1.5, 1.5, 0);  // Make sure this is BEFORE renderDistanceLimiter()!
+//render.renderWall(0, 0, 1.0, 1.5, 0);
+//render.renderWall(0, 0.5, 1.0, 1.0, 0);
+//render.renderWall(0.5, 0.5, 1.0, 1.5, 0);
 
 
 

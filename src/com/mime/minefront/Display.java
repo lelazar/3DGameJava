@@ -10,21 +10,25 @@
 
 /*******************************************************************************************************************************************************************
  * Techniques we are using in this 3D FPS program:
- * Drawing pixels, BufferedImage, BufferedInt, BufferStrategy, Graphics
- * Rendering, animating pixels and graphics
- * FPS Counter, Alpha support, Bitwise operators
- * Making square floors and ceilings, animating depth, animate walking in a 3D world
- * Rotation, user input/controls, limiting the render distance, using the mouse to look around a 3D world
- * Draw text to the screen, adding textures, adding crouch/walk/sprint/jump, making walls
+ * Drawing pixels, BufferedImage, BufferedInt, BufferStrategy, Graphics;
+ * Rendering, animating pixels and graphics;
+ * FPS Counter, Alpha support, Bitwise operators;
+ * Making square floors and ceilings, animating depth, animate walking in a 3D world;
+ * Rotation, user input/controls, limiting the render distance, using the mouse to look around a 3D world;
+ * Draw text to the screen, adding textures, adding crouch/walk/sprint/jump, making and rendering walls;
+ * Manage and prevent crashes, clip correctly via the Cohen-Sutherland algorithm, detecting mouse speed;
+ * Generating random walls, creating GUI (Graphical User Interface), creating a Java application, adding buttons;
+ * Write to file and read from files, storing configuration data in XML files;
+ * Let the user create custom resolutions with the help of labels (JLabel) and text fields (JTextFields);
  *******************************************************************************************************************************************************************/
 
 package com.mime.minefront;
 
 import com.mime.minefront.graphics.Screen;
+import com.mime.minefront.gui.Launcher;
 import com.mime.minefront.input.Controller;
 import com.mime.minefront.input.InputHandler;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -35,8 +39,10 @@ Display extends Canvas implements Runnable  // Canvas is a black rectangular are
 {
     public static final long serialVersionUID = 1L;
 
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 600;
+    // public static final int WIDTH = 800;
+    // public static final int HEIGHT = 600;
+    public static int width = 800;
+    public static int height = 600;
     public static final String TITLE = "Minefront Pre-Alpha 0.02";
 
     private Thread thread;  // Do multiple tasks simultaneously at the same time
@@ -49,18 +55,22 @@ Display extends Canvas implements Runnable  // Canvas is a black rectangular are
     private int newX = 0;
     private int oldX = 0;
     private int fps;
+    public static int selection = 0;  // Helps us to get the selection index of our resolution option in the GUI
+    // Launcher launcher = new Launcher(0, this);
+
+    public static int MouseSpeed;
 
     public
     Display()
     {
-        Dimension size = new Dimension(WIDTH, HEIGHT);
+        Dimension size = new Dimension(getGameWidth(), getGameHeight());
         setPreferredSize(size);
         setMinimumSize(size);
         setMaximumSize(size);
 
-        screen = new Screen(WIDTH, HEIGHT);
+        screen = new Screen(getGameWidth(), getGameHeight());
         game = new Game();
-        img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        img = new BufferedImage(getGameWidth(), getGameHeight(), BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt)img.getRaster().getDataBuffer()).getData();  // Casting it to DataBufferInt
 
         input = new InputHandler();
@@ -70,12 +80,24 @@ Display extends Canvas implements Runnable  // Canvas is a black rectangular are
         addMouseMotionListener(input);
     }
 
+    public static int
+    getGameWidth()
+    {
+        return width;
+    }
+
+    public static int
+    getGameHeight()
+    {
+        return height;
+    }
+
     public synchronized void  // synchronized helps with threads to run properly - a safety precaution when we are using threads
     start()
     {
         if(running) return;  // If the game is already running, we do not want to initialize it again (so we return)
         running = true;
-        thread = new Thread(this);
+        thread = new Thread(this, "game");
         thread.start();
 
         // TEST:
@@ -107,6 +129,7 @@ Display extends Canvas implements Runnable  // Canvas is a black rectangular are
         double secondsPerTick = 1 / 60.0;
         int tickCount = 0;
         boolean ticked = false;
+        requestFocus();  // When launched, it is activated immediately, we do not actually need to click on the screen to activate it
 
         while(running)
         {
@@ -114,7 +137,7 @@ Display extends Canvas implements Runnable  // Canvas is a black rectangular are
             long passedTime = currentTime - previousTime;
             previousTime = currentTime;
             unprocessedSeconds += passedTime / 1_000_000_000.0;
-            requestFocus();  // When launched, it is activated immediately, we do not actually need to click on the screen to activate it
+            //launcher.updateFrame();
 
             while(unprocessedSeconds > secondsPerTick)
             {
@@ -129,14 +152,16 @@ Display extends Canvas implements Runnable  // Canvas is a black rectangular are
                     previousTime += 1000;
                     frames = 0;
                 }
+                if(ticked)
+                {
+                    //render();
+                    //renderMenu();
+                    frames++;
+                }
+                //render();
             }
-            if(ticked)
-            {
-                render();
-                frames++;
-            }
-            render();
-            frames++;
+
+
             // Test for getting the mouse X and Y coordinates: System.out.println("X: " + InputHandler.MouseX + " Y: " + InputHandler.MouseY);
 
             // Creating and testing the mouse movement
@@ -157,6 +182,7 @@ Display extends Canvas implements Runnable  // Canvas is a black rectangular are
                 Controller.turnLeft = false;
                 Controller.turnRight = false;
             }
+            MouseSpeed = Math.abs(newX - oldX);  // Every time it updates, it figures out the amount and the difference that the mouse speed is changed by
             oldX = newX;
         }
     }
@@ -180,13 +206,13 @@ Display extends Canvas implements Runnable  // Canvas is a black rectangular are
 
         screen.render(game);
 
-        for(int i=0; i<WIDTH*HEIGHT; i++)
+        for(int i=0; i<getGameWidth()*getGameHeight(); i++)
         {
             pixels[i] = screen.pixels[i];
         }
 
         Graphics g = bs.getDrawGraphics(); // Graphics is an abstract base class for all graphics contexts that allow an application to draw onto components that are realized on various devices, as well as onto off-screen images
-        g.drawImage(img, 0, 0, WIDTH + 10, HEIGHT + 10, null);  // Draw as much of the specified image as has already been scaled to fit inside the specified rectangle
+        g.drawImage(img, 0, 0, getGameWidth() + 10, getGameHeight() + 10, null);  // Draw as much of the specified image as has already been scaled to fit inside the specified rectangle
         g.setFont(new Font("Verdana", 1, 35));
         g.setColor(Color.yellow);
         g.drawString(fps + " FPS", 15, 45);  // Drawing the FPS counter to the window
@@ -197,20 +223,8 @@ Display extends Canvas implements Runnable  // Canvas is a black rectangular are
     public static void
     main(String[] args)
     {
-        BufferedImage cursor = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);  // Mouse pointer
-        Cursor blank = Toolkit.getDefaultToolkit().createCustomCursor(cursor, new Point(0, 0), "blank");
-        Display game = new Display();
-        JFrame frame = new JFrame();
-        frame.add(game);
-        frame.pack();
-        frame.getContentPane().setCursor(blank);  // We are removing the cursor pointer of the mouse from the screen
-        frame.setTitle(TITLE);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Otherwise, it will not terminate itself
-        frame.setLocationRelativeTo(null);  // Position the window to the center of our screen
-        frame.setResizable(false);
-        frame.setVisible(true);
-
-        game.start();
+        Display display = new Display();
+        new Launcher(0, display);  // We do not need to create an object from this Launcher class, unless we want to use any of its methods or variables, etc.
     }
 }
 
